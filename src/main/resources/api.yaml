@@ -1,0 +1,68 @@
+openapi: 3.0.0
+info:
+  title: room occupancy optimization service
+  description: calculating number of specific rooms based on provided payment requests in opt way.
+  version: 1.0.0
+paths:
+  /optimizations:
+    post:
+      summary: calculates the best possible solution
+      operationId: generateOptimization
+      tags:
+        - Optimizations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amountOfPremiumRooms:
+                  type: integer
+                  description: Number of available Premium rooms
+                  example: 10
+                amountOfEconomyRooms:
+                  type: integer
+                  description: Number of available Economy rooms
+                  example: 20
+                guestPayments:
+                  type: array
+                  description: Array of guest payment requests
+                  items:
+                    type: number
+                    format: float
+                  example: [150.0, 80.0, 120.0, 90.0]
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                title: Optimization Response
+                $ref: '#/components/schemas/OptimizationResponse'
+        "400":
+          description: Request is not correct
+        "404":
+          description: There is no endpoint found
+        "500":
+          description: Internal Server Error
+components:
+  schemas:
+    OptimizationResponse:
+      type: object
+      properties:
+        premiumRoomDetails:
+          $ref: '#/components/schemas/RoomOccupancyResponse'
+        economyRoomDetails:
+          $ref: '#/components/schemas/RoomOccupancyResponse'
+      required:
+        - premiumRoomDetails
+        - economyRoomDetails
+
+    RoomOccupancyResponse:
+      type: object
+      properties:
+        roomUsed:
+          type: integer
+        totalAmount:
+          type: number
